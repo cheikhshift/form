@@ -77,7 +77,7 @@ Tag properties :
 - title : title of field.
 - Placeholder : placeholder of field.
 
-#### 3. Bool
+#### 3. bool
 Display Checkbox.
 
 Tag properties :
