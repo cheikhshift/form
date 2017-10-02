@@ -17,6 +17,7 @@ import (
 	"strings"
 	"reflect"
 	"os"
+	"strconv"
 )
 
 type File string 
@@ -105,7 +106,13 @@ func Form(r *http.Request, i interface{}) error {
 					bso[field.Name] = strings.Contains( r.FormValue(field.Name), "on")
 				} else if strings.Contains(fieldtype, "password"){
 					bso[field.Name] = Hash( r.FormValue(field.Name) )
-				}  else  {
+				}  else if strings.Contains(fieldtype, "int")  {
+					i, _ := strconv.Atoi(r.FormValue(field.Name))
+					bso[field.Name] = i
+				} else if strings.Contains(fieldtype, "float") {
+					f, _ := strconv.ParseFloat(r.FormValue(field.Name), 64)
+					bso[field.Name] = f
+				} else  {
 					bso[field.Name] = r.FormValue(field.Name)
 				
 				}
