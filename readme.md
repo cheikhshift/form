@@ -68,14 +68,14 @@ Display text input box.
 
 Tag properties :
 - title : title of field.
-- Placeholder : placeholder of field.
+- placeholder : placeholder of field.
 
 #### 2. int | float (any number)
 Display number input box.
 
 Tag properties :
 - title : title of field.
-- Placeholder : placeholder of field.
+- placeholder : placeholder of field.
 
 #### 3. bool
 Display Checkbox.
@@ -87,52 +87,52 @@ Tag properties :
 Display file upload box. Use this field property with function `netform.Path`to get local filesystem path.
 
 Tag properties :
-- Title : title of field.
+- title : title of field.
 - file : Mimetype of file to upload. 
 
 #### 5. Paragraph
 Display text area.
 
 Tag properties :
-- Title : title of field.
-- Placeholder : placeholder of field.
+- title : title of field.
+- placeholder : placeholder of field.
 
 #### 6. Date
 Display date input.
 
 Tag properties :
-- Title : title of field.
-- Placeholder : placeholder of field.
+- title : title of field.
+- placeholder : placeholder of field.
 
 #### 7. Select
 Display dropdown list.
 
 Tag properties :
-- Title : title of field.
-- Placeholder : Prompt left of field.
+- title : title of field.
+- placeholder : Prompt left of field.
 - select : comma delimited choices of field.
 
 #### 8. SelectMult
 Display dropdown list with multiple selection support.
 
 Tag properties :
-- Title : title of field.
-- Placeholder : Prompt left of field.
+- title : title of field.
+- placeholder : Prompt left of field.
 - select : comma delimited choices of field.
 
 #### 9. Radio
 Display radio input.
 
 Tag properties :
-- Title : title of field.
+- title : title of field.
 - select : comma delimited choices of field.
 
 #### 10. Email
 Display email input.
 
 Tag properties :
-- Title : title of field.
-- Placeholder : placeholder of field.
+- title : title of field.
+- placeholder : placeholder of field.
 
 
 ### Samples
