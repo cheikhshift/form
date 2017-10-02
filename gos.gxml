@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gos>
+	<!-- xml Schema : https://github.com/cheikhshift/Gopher-Sauce/wiki/XML-tags#xml-schema -->
+	<deploy>package</deploy>
+	<port>8080</port>
+	<package>form</package>
+	<not_found>/your-404-page</not_found>
+	<error>/your-500-page</error>
+
+	<output>application.go</output>
+	<domain></domain><!-- Cookie domain -->
+	<main>	
+
+		if _, err := os.Stat("./uploads"); os.IsNotExist(err) {
+			os.Mkdir("./uploads",0700)
+		}
+	</main>
+	<import src="github.com/cheikhshift/gos/core"/>
+	<import src='netform "github.com/cheikhshift/form"'/>
+	<import src="reflect"/>
+	<key>a very very very very secret key</key>
+	
+	<header> 
+		<!-- remember to Jumpline when stating methods or different struct attributes, it is vital for our parser \n trick -->
+		<struct name="SampleForm">
+			TestField string `title:"Hi world!",valid:"unique",placeholder:"Testfield prompt"`
+			Count int `placeholder:"Count"`
+			Name string `valid:"required",title:"Input title"`
+			FieldTwo netform.Radio `title:"Enter Email",valid:"email,unique,required",select:"blue,orange,red,green"`
+			FieldF netform.Select `placeholder:"Prompt?",valid:"email,unique,required",select:"blue,orange,red,green"`
+			Created netform.Date
+			Text netform.Paragraph 	`title:"Enter a description."`
+			Photo netform.File 	`file:"image/*"`
+			Emal netform.Email
+			Terms bool	`title:"Accept terms of use."`
+		</struct>
+		<struct name="fInput">
+		 	Name,Type,Placeholder,Title,Class,Value string
+		 	Choices []string
+		 	Required bool
+		</struct>
+		<struct name="fForm">
+		 	Target,Method,Token,ButtonClass,CTA string
+		 	Input []fInput
+		</struct>
+	</header>
+	<methods>
+		<method name="IsIn" var="" return="bool">
+			return strings.Contains(args[0].(string), args[1].(string))
+		</method>
+		<method name="TokenizeForm" var="" return="(form fForm)">
+			
+			v := reflect.ValueOf(args[0]).Elem()
+			//t := reflect.TypeOf(item)
+			bso :=  netform.ToBson( mResponse(args[0]) )
+			for i := 0; i < v.NumField(); i++ {
+				field := v.Type().Field(i)
+				
+				fieldtype := strings.ToLower(field.Type.String())
+				requird := strings.Contains(string(field.Tag), "required")
+				opts := netform.GetSel(string(field.Tag))
+				title := field.Tag.Get("title")
+				placehlder := netform.GetPl(string(field.Tag))
+				
+				
+				if strings.Contains(fieldtype, "bool"){
+					form.Input = append(form.Input, fInput{field.Name, "checkbox",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird })
+				} else if strings.Contains(fieldtype, "int") || strings.Contains(fieldtype, "float") {
+					form.Input = append(form.Input, fInput{field.Name, "number",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird })
+				}  else if strings.Contains(fieldtype, "string"){
+					form.Input = append(form.Input, fInput{field.Name, "text",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird })
+				} else if strings.Contains(fieldtype, "email"){
+					form.Input = append(form.Input, fInput{field.Name, "email",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird })
+				} else if strings.Contains(fieldtype, "password"){
+					form.Input = append(form.Input, fInput{field.Name, "password",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird })
+				}  else if strings.Contains(fieldtype, "select"){
+					
+					form.Input = append(form.Input, fInput{field.Name, "select",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird })
+
+				}  else if strings.Contains(fieldtype, "radio"){
+
+					form.Input = append(form.Input, fInput{field.Name, "radio",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird })
+
+				} else if strings.Contains(fieldtype, "selectmult"){
+					
+					form.Input = append(form.Input, fInput{field.Name, "selectmult",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird })
+
+				}  else if strings.Contains(fieldtype, "date"){
+					form.Input = append(form.Input, fInput{field.Name, "date",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name] ), nil , requird })
+				}  else if strings.Contains(fieldtype, "file"){
+					placehlder = field.Tag.Get("file")
+					form.Input = append(form.Input, fInput{field.Name, "file",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name] ), nil , requird })
+				}  else if strings.Contains(fieldtype, "paragraph"){
+					form.Input = append(form.Input, fInput{field.Name, "textarea",placehlder,title,netform.InputClass,fmt.Sprintf("%v", bso[field.Name] ), nil , requird })
+				} else {
+					form.Input = append(form.Input, fInput{field.Name, "invalid",placehlder,title,netform.InputClass,"", nil , requird })
+				}
+			}
+
+			return
+		</method>
+		<method name="Build" var="" return="string">
+			if len(args) < 5 {
+				return "<h1>No enough arguments to build form.</h1>"
+			} 
+				form := net_TokenizeForm(args[0])
+				target := args[1].(string)
+				session := args[4].(*sessions.Session)
+
+				form.Token = netform.GenerateToken(target, session.Values["formtoken"].(string) )
+				form.Method = args[2].(string)
+				form.Target = target
+				form.ButtonClass = netform.ButtonClass
+				form.CTA = args[3].(string)
+				return btForm(form)
+		</method>
+		<method name="GenerateToken" var="" return="string">
+				session := args[1].(*sessions.Session)
+				return netform.GenerateToken(args[0].(string), session.Values["formtoken"].(string) )
+		</method>
+		
+
+	</methods>
+
+	<templates>
+ 	
+ 		<template name="tInput" tmpl="input" struct="fInput" /> 
+ 		<template name="tForm" tmpl="form" struct="fForm" /> 
+	</templates>
+	<endpoints>
+      <!-- Depending on your build type the usage of this tag will vary. -->
+      <!-- For WebServers it will override any request for a given path and run the specified method. No vars or return types are needed for  -->
+      <!-- methods linked to an API call, please keep in mind that you may use w for http.ResponseWriter and r for http.Request . Additional available function variables is params and session. If a function is api listed it will not be used anywhere else.-->
+      <!-- <end /> is the endpoint tag and has the variables path,method, -->
+      <!-- Happy trails!!! -->
+      <!-- <end path="/index/api"  type="POST" >
+      	varr := "data"
+      	fmt.Println(varr)
+      	//response is the string variable sent -> mResponse()
+      	response = varr
+      </end> -->
+      <end path="/test/form-build" type="GET" >
+      	
+      		w.Header().Set("Content-Type",  "text/html")
+      		SampleForm := SampleForm{Text: "Sample",Created:"2017-05-05" ,FieldTwo:"Sample",Emal:"sample",FieldF:"orange",Count:500,Terms : true}
+      		w.Write([]byte(net_Build(&SampleForm, "/target/url", "POST", "Update",session) )) 
+      </end>
+      <end path="" type="f" >
+ 			
+      		if _, ok := session.Values["formtoken"]; !ok {
+      			session.Values["formtoken"] = core.NewLen(10)
+      			session.Save(r, w)
+      		}
+
+
+      		if r.ContentLength > 0	{
+
+      			if !netform.ValidateRequest(r, session.Values["formtoken"].(string) ) || r.ContentLength > int64(netform.MaxSize * netform.MB) {
+      				
+      				w.WriteHeader(http.StatusBadRequest)
+      				w.Header().Set("Content-Type",  "text/xml")
+      		
+      				w.Write([]byte("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Error>Invalid request sent</Error>"))
+      				return true
+      			}
+      		} 
+
+      </end>
+
+      <end path="/target/url" type="POST" >
+      		var sampleform SampleForm
+      		if err := netform.Form(r, &sampleform); err != nil {
+      			w.WriteHeader(http.StatusBadRequest)
+      				w.Header().Set("Content-Type",  "text/xml")			
+      				w.Write([]byte(fmt.Sprintf("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Error>%s</Error>", err.Error() )))
+      			return true
+      		}
+      		response = mResponse(sampleform)
+      		//http.ServeFile(w, r, netform.Path(sampleform.Photo))
+      </end>
+
+	</endpoints>
+</gos>
