@@ -1,0 +1,41 @@
+{
+	"ImportPath": "github.com/cheikhshift/form",
+	"GoVersion": "go1.9",
+	"GodepVersion": "v79",
+	"Deps": [
+		{
+			"ImportPath": "github.com/asaskevich/govalidator",
+			"Comment": "v6-23-g15028e8",
+			"Rev": "15028e809df8c71964e8efa6c11e81d5c0262302"
+		},
+		{
+			"ImportPath": "github.com/cheikhshift/gos/core",
+			"Comment": "v0.5.3-6-gd1a3e8b",
+			"Rev": "d1a3e8bb9aa815119edb74504a6e1833b7061a77"
+		},
+		{
+			"ImportPath": "github.com/fatih/color",
+			"Comment": "v1.5.0-4-g67c513e",
+			"Rev": "67c513e5729f918f5e69786686770c27141a4490"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-colorable",
+			"Comment": "v0.0.9-6-gad5389d",
+			"Rev": "ad5389df28cdac544c99bd7b9161a0b5b6ca9d1b"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-isatty",
+			"Comment": "v0.0.3-1-ga5cdd64",
+			"Rev": "a5cdd64afdee435007ee3e9f6ed4684af949d568"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "b90f89a1e7a9c1f6b918820b3daa7f08488c8594"
+		},
+		{
+			"ImportPath": "gopkg.in/mgo.v2/bson",
+			"Comment": "r2015.12.06-2-g03c9f3e",
+			"Rev": "03c9f3ee4c14c8e51ee521a6a7d0425658dd6f64"
+		}
+	]
+}
