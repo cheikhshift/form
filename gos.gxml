@@ -25,7 +25,7 @@
 		<struct name="SampleForm">
 			TestField string `title:"Hi world!",valid:"unique",placeholder:"Testfield prompt"`
 			Count int `placeholder:"Count"`
-			Name string `valid:"required",title:"Input title"`
+			Name netform.Password `valid:"required",title:"Input title"`
 			FieldTwo netform.Radio `title:"Enter Email",valid:"email,unique,required",select:"blue,orange,red,green"`
 			FieldF netform.Select `placeholder:"Prompt?",valid:"email,unique,required",select:"blue,orange,red,green"`
 			Created netform.Date
@@ -149,7 +149,7 @@
       <end path="/test/form-build" type="GET" >
       	
       		w.Header().Set("Content-Type",  "text/html")
-      		SampleForm := SampleForm{Text: "Sample",Created:"2017-05-05" ,FieldTwo:"Sample",Emal:"sample",FieldF:"orange",Count:500,Terms : true}
+      		SampleForm := SampleForm{Text: "Sample",Created:"2017-05-05" ,Emal:"sample",FieldF:"orange",Count:500,Terms : true}
       		w.Write([]byte(net_Build(&SampleForm, "/target/url", "POST", "Update",session) )) 
       </end>
       <end path="" type="f" >
@@ -179,7 +179,7 @@
       		if err := netform.Form(r, &sampleform); err != nil {
       			w.WriteHeader(http.StatusBadRequest)
       				w.Header().Set("Content-Type",  "text/xml")			
-      				w.Write([]byte(fmt.Sprintf("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Error>%s</Error>", err.Error() )))
+      				w.Write([]byte(fmt.Sprintf("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Error>%s Value :%v</Error>", err.Error(),sampleform )))
       			return true
       		}
       		response = mResponse(sampleform)

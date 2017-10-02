@@ -7,6 +7,7 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/base64"
+	"crypto/sha512"
 	"gopkg.in/mgo.v2/bson"
 	"github.com/cheikhshift/gos/core"
 	"fmt"
@@ -25,6 +26,7 @@ type Select string
 type SelectMult Select
 type Radio Select
 type Email string
+type Password []byte
 //select opts,placeholder,title
 const (
         MB = 1 << 20
@@ -62,6 +64,11 @@ func GetPl(tagstr string) string {
 	return ""
 }
 
+func Hash(input string) []byte {
+	return sha512.New512_256().Sum([]byte(input ))
+}
+	
+
 func Path(pathtoformat File) string {
 	return fmt.Sprintf("./uploads/%s", pathtoformat )
 }
@@ -76,30 +83,28 @@ func Form(r *http.Request, i interface{}) error {
 
 			for i := 0; i < v.NumField(); i++ {
 				field := v.Type().Field(i)
-				
-					fieldtype := strings.ToLower(field.Type.String())
-				
-					
-					if strings.Contains(fieldtype, "file"){
-						fmt.Println("add file!")
-					file, handler, _ := r.FormFile(field.Name)
-			       
-	      
-	 
-	      		fid := fmt.Sprintf("%s-%s", core.NewLen(15),handler.Filename )
-			        f, err := os.OpenFile(fmt.Sprintf("./uploads/%s", fid ), os.O_WRONLY|os.O_CREATE, 0700)
-			        if err != nil {
-			           
-			            return err
-			        }
-			        
-			 
-			        io.Copy(f, file)
-			        f.Close()
-			        bso[field.Name] = fid
-			        file.Close()
+				fieldtype := strings.ToLower(field.Type.String())				
+					if strings.Contains(fieldtype, "file"){			
+						file, handler, _ := r.FormFile(field.Name)
+
+						if handler != nil {
+		      			fid := fmt.Sprintf("%s-%s", core.NewLen(15),handler.Filename )
+				        f, err := os.OpenFile(fmt.Sprintf("./uploads/%s", fid ), os.O_WRONLY|os.O_CREATE, 0700)
+				        if err != nil {
+				           
+				            return err
+				        }
+				        
+				 
+				        io.Copy(f, file)
+				        f.Close()
+				        bso[field.Name] = fid
+				        file.Close()
+			    	}
 				} else if strings.Contains(fieldtype, "bool"){
 					bso[field.Name] = strings.Contains( r.FormValue(field.Name), "on")
+				} else if strings.Contains(fieldtype, "password"){
+					bso[field.Name] = Hash( r.FormValue(field.Name) )
 				}  else  {
 					bso[field.Name] = r.FormValue(field.Name)
 				
