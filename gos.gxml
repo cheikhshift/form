@@ -48,6 +48,13 @@
 		<method name="IsIn" var="" return="bool">
 			return strings.Contains(args[0].(string), args[1].(string))
 		</method>
+		<method name="HasBody" var="" return="bool">
+			return args[0].(*http.Request).ContentLength > 0 
+		</method>
+		<method name="Form" var="" return="string">
+			err := netform.Form(args[0].(*http.Request) , args[1])
+			return err.Error()
+		</method>
 		<method name="TokenizeForm" var="" return="(form fForm)">
 			
 			v := reflect.ValueOf(args[0]).Elem()

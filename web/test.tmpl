@@ -1,1 +1,6 @@
-{{ Build SampleForm "/target/url" "POST" "Save" .Session }}
+{{ Build SampleForm .R.URL.Path "POST" "Save" .Session }}
+
+{{if HasBody .R}}
+	{{$err := Form .R SampleForm }}
+	{{$err}}
+{{end}}

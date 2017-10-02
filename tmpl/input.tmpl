@@ -1,5 +1,4 @@
 {{if neq "" .Title}}
-
 		{{ if neq "checkbox" .Type }}
 		<p>{{ .Title }}</p>
 		{{end}}
@@ -7,38 +6,37 @@
 
 {{  if "selectmult" | IsIn .Type }}
 {{ $value := .Value }}
-<label>{{ .Placeholder }}</label><select class="{{ .Class }}" name="{{ .Name }}" required="{{ .Required }}" multiple>
+<label>{{ .Placeholder }}</label><select class="{{ .Class }}" name="{{ .Name }}" {{ if .Required }}required{{end}} multiple>
 	{{ range .Choices}}
 		<option {{ if  . | IsIn $value }}selected{{end}}>{{ . }}</option>
 	{{ end }}
 </select>
 {{  else if "select" | IsIn .Type }}
-<label>{{ .Placeholder }}</label><select class="{{ .Class }}" name="{{ .Name }}" required="{{ .Required }}" >
+<label>{{ .Placeholder }}</label><select class="{{ .Class }}"  {{ if .Required }}required{{end}} name="{{ .Name }}">
 	{{ $value := .Value }}
 	{{ range .Choices}}
 		<option {{ if  . | IsIn $value }}selected{{end}} >{{ . }}</option>
 	{{ end }}
 </select>
 {{ else if "file" | IsIn .Type }}
-<p><input class="{{ .Class }}" accept="{{ .Placeholder }}" type="{{ .Type }}" name="{{ .Name }}" required="{{ .Required }}"/></p>
+<p><input class="{{ .Class }}" accept="{{ .Placeholder }}"  name="{{ .Name }}" {{ if .Required }}required{{end}} type="{{ .Type }}" /></p>
 {{ else if "textarea" | IsIn .Type }}
-<p><textarea class="{{ .Class }}" style="min-height:150px;" placeholder="{{ .Placeholder }}" name="{{ .Name }}" required="{{ .Required }}">{{.Value  }}</textarea> </p>
+<p><textarea class="{{ .Class }}" style="min-height:150px;" placeholder="{{ .Placeholder }}" name="{{ .Name }}" {{ if .Required }}required{{end}}>{{.Value  }}</textarea> </p>
 {{ else if "radio" | IsIn .Type }}
-<p>
+
 {{ $name := .Name }}
 {{ $required := .Required }}
 {{ $value := .Value }}
 	{{range .Choices}}
-  		<input type="radio" 
-     name="{{ $name }}" value="{{ . }}" {{ if eq $value "true" }}checked{{end}}  required="{{ $required }} "/>
-    	<label>{{ . }}</label><br />
+  		<p><input  
+     name="{{ $name }}"  {{ if eq $value "true" }}checked{{end}} 
+     {{ if $required }}required{{end}} value="{{ . }}" type="radio" />
+    	{{ . }}</p>
     {{end}}
-</p>
 {{ else if "checkbox" | IsIn .Type }}
-<p><input type="checkbox" name="{{ .Name }}" {{ if eq .Value "true" }}checked{{end}} required="{{ .Required }}"/> {{ .Title }}</p>
+<p><input type="checkbox" name="{{ .Name }}" {{ if eq .Value "true" }}checked{{end}} {{ if .Required }}required{{end}} /> {{ .Title }}</p>
 {{ else if "invalid" | IsIn .Type }}
-<input type="hidden"  value="{{ .Value }}" name="{{ .Name }}" />
+<input type="hidden"  value="{{ .Value }}" name="{{ .Name }}" {{ if .Required }}required{{end}} />
 {{else }}
-<p><input class="{{ .Class }}" value="{{ .Value }}" placeholder="{{ .Placeholder }}" type="{{ .Type }}" name="{{ .Name }}" required="{{ .Required }}" /></p>
+<p><input class="{{ .Class }}" value="{{ .Value }}" placeholder="{{ .Placeholder }}" type="{{ .Type }}" name="{{ .Name }}" {{ if .Required }}required{{end}} /></p>
 {{end}}
-

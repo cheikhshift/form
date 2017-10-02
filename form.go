@@ -82,10 +82,8 @@ func Form(r *http.Request, i interface{}) error {
 					
 					if strings.Contains(fieldtype, "file"){
 						fmt.Println("add file!")
-					file, handler, err := r.FormFile(field.Name)
-			        if err != nil {        
-			            return err
-			        }
+					file, handler, _ := r.FormFile(field.Name)
+			       
 	      
 	 
 	      		fid := fmt.Sprintf("%s-%s", core.NewLen(15),handler.Filename )
