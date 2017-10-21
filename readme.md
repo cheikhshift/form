@@ -2,7 +2,7 @@
 Create HTML forms with your structs and interfaces.
 
 ### Requirements
-- [Go Server](http://gophersauce.com)
+- [GopherSauce](http://gophersauce.com)
 
 
 ### Install and import
