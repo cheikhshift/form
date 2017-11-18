@@ -1,0 +1,9 @@
+<form class="go-form" validate>
+       	<div class="result"></div>
+		{{range .Input}}
+			{{batInput .}}
+		{{end}}
+
+		<input type="hidden" name="{{ .ModelName }}.formtoken" value="{{.Token}}" />
+        <input type="submit" class="{{.ButtonClass}}" ng-click="{{ .Method }}" value="{{.CTA}}" />
+ </form>

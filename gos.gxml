@@ -39,12 +39,30 @@
 		 	Choices []string
 		 	Required bool
 		</struct>
+		<struct name="afInput">
+		 	Name,Type,Placeholder,Title,Class,Value string
+		 	Choices []string
+		 	Required bool
+		 	ModelName string
+		</struct>
 		<struct name="fForm">
 		 	Target,Method,Token,ButtonClass,CTA string
 		 	Input []fInput
 		</struct>
+		<struct name="aForm">
+			Target,Method,Token,ButtonClass,CTA string
+		 	Input []afInput
+			ModelName string
+		</struct>
 	</header>
 	<methods>
+	<method name="aC" var="" return="string">
+		return "}}"
+	</method>
+	<method name="aO" var="" return="string">
+		return "{{"
+	</method>
+
 		<method name="IsIn" var="" return="bool">
 			return strings.Contains(args[0].(string), args[1].(string))
 		</method>
@@ -106,11 +124,64 @@
 
 			return
 		</method>
+		<method name="TokenizeFormAng" var="" return="(form aForm)">
+			
+			v := reflect.ValueOf(args[0]).Elem()
+			//t := reflect.TypeOf(item)
+			modelClass := args[1].(string)
+			bso :=  netform.ToBson( mResponse(args[0]) )
+			for i := 0; i < v.NumField(); i++ {
+				field := v.Type().Field(i)
+				
+				fieldtype := strings.ToLower(field.Type.String())
+				requird := strings.Contains(string(field.Tag), "required")
+				opts := netform.GetSel(string(field.Tag))
+				title := field.Tag.Get("title")
+				placehlder := netform.GetPl(string(field.Tag))
+				
+
+				
+				if strings.Contains(fieldtype, "bool"){
+					form.Input = append(form.Input, afInput{field.Name, "checkbox",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird , modelClass})
+				} else if strings.Contains(fieldtype, "int") || strings.Contains(fieldtype, "float") {
+					form.Input = append(form.Input, afInput{field.Name, "number",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird, modelClass })
+				}  else if strings.Contains(fieldtype, "string"){
+					form.Input = append(form.Input, afInput{field.Name, "text",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird , modelClass})
+				} else if strings.Contains(fieldtype, "email"){
+					form.Input = append(form.Input, afInput{field.Name, "email",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird, modelClass })
+				} else if strings.Contains(fieldtype, "password"){
+					form.Input = append(form.Input, afInput{field.Name, "password",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird, modelClass })
+				}  else if strings.Contains(fieldtype, "select"){
+					
+					form.Input = append(form.Input, afInput{field.Name, "select",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird, modelClass })
+
+				}  else if strings.Contains(fieldtype, "radio"){
+
+					form.Input = append(form.Input, afInput{field.Name, "radio",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird , modelClass})
+
+				} else if strings.Contains(fieldtype, "selectmult"){
+					
+					form.Input = append(form.Input, afInput{field.Name, "selectmult",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird , modelClass })
+
+				}  else if strings.Contains(fieldtype, "date"){
+					form.Input = append(form.Input, afInput{field.Name, "date",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name] ), nil , requird, modelClass })
+				}  else if strings.Contains(fieldtype, "file"){
+					placehlder = field.Tag.Get("file")
+					form.Input = append(form.Input, afInput{field.Name, "file",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name] ), nil , requird, modelClass })
+				}  else if strings.Contains(fieldtype, "paragraph"){
+					form.Input = append(form.Input, afInput{field.Name, "textarea",placehlder,title,netform.InputClass,fmt.Sprintf("%v", bso[field.Name] ), nil , requird, modelClass })
+				} else {
+					form.Input = append(form.Input, afInput{field.Name, "invalid",placehlder,title,netform.InputClass,"", nil , requird, modelClass })
+				}
+			}
+
+			return
+		</method>
 		<method name="Build" var="" return="string">
 			if len(args) < 5 {
 				return "<h1>No enough arguments to build form.</h1>"
 			} 
-				form := net_TokenizeForm(args[0])
+				form := NetTokenizeForm(args[0])
 				target := args[1].(string)
 				session := args[4].(*sessions.Session)
 
@@ -120,6 +191,22 @@
 				form.ButtonClass = netform.ButtonClass
 				form.CTA = args[3].(string)
 				return btForm(form)
+		</method>
+		<method name="AngularForm" var="" return="string">
+			if len(args) < 6 {
+				return "<h1>No enough arguments to build form.</h1>"
+			} 	
+				modelclass := args[4].(string)
+				form := NetTokenizeFormAng(args[0], modelclass)
+				target := args[1].(string)
+				session := args[5].(*sessions.Session)
+				form.ModelName = modelclass
+				form.Token = netform.GenerateToken(target, session.Values["formtoken"].(string) )
+				form.Method = args[2].(string)
+				form.Target = target
+				form.ButtonClass = netform.ButtonClass
+				form.CTA = args[3].(string)
+				return batForm(form)
 		</method>
 		<method name="GenerateToken" var="" return="string">
 				session := args[1].(*sessions.Session)
@@ -132,7 +219,9 @@
 	<templates>
  	
  		<template name="tInput" tmpl="input" struct="fInput" /> 
+ 		<template name="atInput" tmpl="ainput" struct="afInput" /> 
  		<template name="tForm" tmpl="form" struct="fForm" /> 
+ 		<template name="atForm" tmpl="aform" struct="aForm" /> 
 	</templates>
 	<endpoints>
       <!-- Depending on your build type the usage of this tag will vary. -->
@@ -150,9 +239,9 @@
       	
       		w.Header().Set("Content-Type",  "text/html")
       		SampleForm := SampleForm{Text: "Sample",Created:"2017-05-05" ,Emal:"sample",FieldF:"orange",Count:500,Terms : true}
-      		w.Write([]byte(net_Build(&SampleForm, "/target/url", "POST", "Update",session) )) 
+      		w.Write([]byte(NetBuild(&SampleForm, "/target/url", "POST", "Update",session) )) 
       </end>
-      <end path="" type="f" >
+      <end path="" id="ValidateForm" type="f" >
  			
       		if _, ok := session.Values["formtoken"]; !ok {
       			session.Values["formtoken"] = core.NewLen(10)

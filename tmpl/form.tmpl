@@ -1,11 +1,11 @@
-<form enctype="multipart/form-data" class="go-form" action="{{ .Target }}" method="{{ .Method }}">
+<form enctype="multipart/form-data" class="go-form" action="{{.Target}}" method="{{.Method}}">
        	
        	<div class="result"></div>
 		{{range .Input}}
-			{{ btInput .}}
+			{{btInput .}}
 		{{end}}
 
-		<input type="hidden" name="formtoken" value="{{  .Token }}" />
-          {{/* 1. Submit button */}}
-          <input type="submit" class="{{ .ButtonClass }}" value="{{  .CTA }}" />
+		<input type="hidden" name="formtoken" value="{{.Token}}" />
+          
+          <input type="submit" class="{{.ButtonClass}}" value="{{.CTA}}" />
  </form>

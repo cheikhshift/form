@@ -1,0 +1,42 @@
+{{if neq "" .Title}}
+		{{ if neq "checkbox" .Type }}
+		<p>{{ .Title }}</p>
+		{{end}}
+{{end}}
+
+{{  if "selectmult" | IsIn .Type }}
+{{ $value := .Value }}
+<label>{{ .Placeholder }}</label><select class="{{ .Class }}" ng-model="{{ .ModelName }}.{{ .Name }}" {{ if .Required }}required{{end}} multiple>
+	{{ range .Choices}}
+		<option {{ if  . | IsIn $value }}selected{{end}}>{{ . }}</option>
+	{{ end }}
+</select>
+{{  else if "select" | IsIn .Type }}
+<label>{{ .Placeholder }}</label><select class="{{ .Class }}"  {{ if .Required }}required{{end}} ng-model="{{ .ModelName }}.{{ .Name }}">
+	{{ $value := .Value }}
+	{{ range .Choices}}
+		<option {{ if  . | IsIn $value }}selected{{end}} >{{ . }}</option>
+	{{ end }}
+</select>
+{{ else if "file" | IsIn .Type }}
+<p><input class="{{ .Class }}" accept="{{ .Placeholder }}"  ng-model="{{ .ModelName }}.{{ .Name }}" {{ if .Required }}required{{end}} type="{{ .Type }}" /></p>
+{{ else if "textarea" | IsIn .Type }}
+<p><textarea class="{{ .Class }}" style="min-height:150px;" placeholder="{{ .Placeholder }}" ng-model="{{ .ModelName }}.{{ .Name }}" {{ if .Required }}required{{end}}>{{.Value  }}</textarea> </p>
+{{ else if "radio" | IsIn .Type }}
+
+{{ $name := .Name }}
+{{ $required := .Required }}
+{{ $value := .Value }}
+	{{range .Choices}}
+  		<p><input  
+     ng-model="{{ $name }}"  {{ if eq $value "true" }}checked{{end}} 
+     {{ if $required }}required{{end}} value="{{ . }}" type="radio" />
+    	{{ . }}</p>
+    {{end}}
+{{ else if "checkbox" | IsIn .Type }}
+<p><input type="checkbox" ng-model="{{ .ModelName }}.{{ .Name }}" {{ if eq .Value "true" }}checked{{end}} {{ if .Required }}required{{end}} /> {{ .Title }}</p>
+{{ else if "invalid" | IsIn .Type }}
+<input type="hidden"  value="{{ .Value }}" ng-model="{{ .ModelName }}.{{ .Name }}" {{ if .Required }}required{{end}} />
+{{else }}
+<p><input class="{{ .Class }}" value="{{ .Value }}" placeholder="{{ .Placeholder }}" type="{{ .Type }}" ng-model="{{ .ModelName }}.{{ .Name }}" {{ if .Required }}required{{end}} /></p>
+{{end}}
