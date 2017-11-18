@@ -24,6 +24,22 @@ Set input field class :
 Set submit button class :
 	
 	netform.ButtonClass = ""
+
+### How to use with AngularJS
+
+Build a new form compatible with Angular using the following template pipeline :
+
+	{{ AngularForm $arg1 $arg2 $arg3 $arg4 $arg5 .Session }}
+
+Argument information :
+
+- `$arg1` : Interface{} - Interface to build form with. Submit a variable with data to prepopulate form.
+- `$arg2` :  String - Target URL to submit form to. This is used to generate a token only valid for the specified target URL path.
+- `$arg3` : String - JS Function to use with form's submit ng-click .
+- `$arg4` : Call to action of form button.
+- `$arg5` : String - variable name to be used as a local scope object to hold form data. 
+- `.Session` :  [*sessions.Session](https://github.com/gorilla/sessions/blob/master/sessions.go#L47) -  Current user session. Must be passed to ensure secure communication.	
+
 ### How to use
 
 Build a new form within a Golang server template:
@@ -32,11 +48,11 @@ Build a new form within a Golang server template:
 			
 Argument information :
 
-- `$arg1` : Interface to build form with. Submit a variable with data to prepopulate form.
-- `$arg2` :  Target URL to submit form to.
-- `$arg3` : Method of form submission.
-- `$arg4` : Call to action of form button.
-- `.Session` :  Current user session. Must be passed to ensure secure communication.
+- `$arg1` : Interface{} - Interface to build form with. Submit a variable with data to prepopulate form.
+- `$arg2` : String - Target URL to submit form to.
+- `$arg3` : String - Method of form submission (GET,POST,PUT etc...).
+- `$arg4` : String - Call to action of form button.
+- `.Session` : [*sessions.Session](https://github.com/gorilla/sessions/blob/master/sessions.go#L47) Current user session. Must be passed to ensure secure communication.
 		
 Build within `<end>` tag :
 
