@@ -1095,14 +1095,9 @@ func NetctInput(args ...interface{}) (d fInput) {
 
 func ctInput(args ...interface{}) (d fInput) {
 	if len(args) > 0 {
-		var jsonBlob = []byte(args[0].(string))
-		err := json.Unmarshal(jsonBlob, &d)
-		if err != nil {
-			log.Println("error:", err)
-			return
-		}
+		d = NetctInput(args[0])
 	} else {
-		d = fInput{}
+		d = NetctInput()
 	}
 	return
 }
@@ -1192,14 +1187,9 @@ func NetcatInput(args ...interface{}) (d afInput) {
 
 func catInput(args ...interface{}) (d afInput) {
 	if len(args) > 0 {
-		var jsonBlob = []byte(args[0].(string))
-		err := json.Unmarshal(jsonBlob, &d)
-		if err != nil {
-			log.Println("error:", err)
-			return
-		}
+		d = NetcatInput(args[0])
 	} else {
-		d = afInput{}
+		d = NetcatInput()
 	}
 	return
 }
@@ -1289,14 +1279,9 @@ func NetctForm(args ...interface{}) (d fForm) {
 
 func ctForm(args ...interface{}) (d fForm) {
 	if len(args) > 0 {
-		var jsonBlob = []byte(args[0].(string))
-		err := json.Unmarshal(jsonBlob, &d)
-		if err != nil {
-			log.Println("error:", err)
-			return
-		}
+		d = NetctForm(args[0])
 	} else {
-		d = fForm{}
+		d = NetctForm()
 	}
 	return
 }
@@ -1386,14 +1371,9 @@ func NetcatForm(args ...interface{}) (d aForm) {
 
 func catForm(args ...interface{}) (d aForm) {
 	if len(args) > 0 {
-		var jsonBlob = []byte(args[0].(string))
-		err := json.Unmarshal(jsonBlob, &d)
-		if err != nil {
-			log.Println("error:", err)
-			return
-		}
+		d = NetcatForm(args[0])
 	} else {
-		d = aForm{}
+		d = NetcatForm()
 	}
 	return
 }
