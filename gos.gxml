@@ -7,7 +7,7 @@
 	<not_found>/your-404-page</not_found>
 	<error>/your-500-page</error>
 
-	<output>application.go</output>
+	<output>form_api.go</output>
 	<domain></domain><!-- Cookie domain -->
 	<main>	
 
@@ -178,6 +178,12 @@
 			return
 		</method>
 		<method name="Build" var="" return="string">
+			<!-- Return HTML form 
+			Argument 1 : Interface{} - Interface to build form with. Submit a variable with data to prepopulate form.
+			Argument 2 : String - Target URL to submit form to.
+			Argument 3 : String - Method of form submission (GET,POST,PUT etc...).
+			Argument 4 : String - Call to action of form button.
+			Argument 5 : *sessions.Session Current user session. Must be passed to ensure secure communication.-->	
 			if len(args) < 5 {
 				return "<h1>No enough arguments to build form.</h1>"
 			} 
@@ -192,7 +198,15 @@
 				form.CTA = args[3].(string)
 				return btForm(form)
 		</method>
+
 		<method name="AngularForm" var="" return="string">
+			<!-- Return string of Angular form 
+			Argument 1 : Interface{} - Interface to build form with. Submit a variable with data to prepopulate form.
+			Argument 2 : String - Target URL to submit form to. This is used to generate a token only valid for the specified target URL path.
+			Argument 3 : String - JS Function to use with form's submit ng-click .
+			Argument 4 : Call to action of form button.
+			Argument 5 : String - variable name to be used as a local scope object to hold form data.
+			Argument 5 : *sessions.Session Current user session. Must be passed to ensure secure communication. -->
 			if len(args) < 6 {
 				return "<h1>No enough arguments to build form.</h1>"
 			} 	
@@ -208,7 +222,11 @@
 				form.CTA = args[3].(string)
 				return batForm(form)
 		</method>
+		
 		<method name="GenerateToken" var="" return="string">
+		<!-- Return  string of form token.
+		Argument 0 : String of URI your form is submitting to
+		Argument 1 : *sessions.Session (github.com/gorilla/sessions) -->
 				session := args[1].(*sessions.Session)
 				return netform.GenerateToken(args[0].(string), session.Values["formtoken"].(string) )
 		</method>
