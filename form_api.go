@@ -1054,6 +1054,7 @@ func btInput(d fInput) string {
 	return NetbtInput(d)
 }
 
+//
 func NetbtInput(d fInput) string {
 
 	filename := "tmpl/input.tmpl"
@@ -1106,11 +1107,6 @@ func ctInput(args ...interface{}) (d fInput) {
 	return
 }
 
-//
-func BtInput(intstr fInput) string {
-	return NetbtInput(intstr)
-}
-
 func NetatInput(args ...interface{}) string {
 
 	var d afInput
@@ -1155,6 +1151,7 @@ func batInput(d afInput) string {
 	return NetbatInput(d)
 }
 
+//
 func NetbatInput(d afInput) string {
 
 	filename := "tmpl/ainput.tmpl"
@@ -1207,11 +1204,6 @@ func catInput(args ...interface{}) (d afInput) {
 	return
 }
 
-//
-func BatInput(intstr afInput) string {
-	return NetbatInput(intstr)
-}
-
 func NettForm(args ...interface{}) string {
 
 	var d fForm
@@ -1256,6 +1248,7 @@ func btForm(d fForm) string {
 	return NetbtForm(d)
 }
 
+//
 func NetbtForm(d fForm) string {
 
 	filename := "tmpl/form.tmpl"
@@ -1308,11 +1301,6 @@ func ctForm(args ...interface{}) (d fForm) {
 	return
 }
 
-//
-func BtForm(intstr fForm) string {
-	return NetbtForm(intstr)
-}
-
 func NetatForm(args ...interface{}) string {
 
 	var d aForm
@@ -1357,6 +1345,7 @@ func batForm(d aForm) string {
 	return NetbatForm(d)
 }
 
+//
 func NetbatForm(d aForm) string {
 
 	filename := "tmpl/aform.tmpl"
@@ -1407,11 +1396,6 @@ func catForm(args ...interface{}) (d aForm) {
 		d = aForm{}
 	}
 	return
-}
-
-//
-func BatForm(intstr aForm) string {
-	return NetbatForm(intstr)
 }
 
 func dummy_timer() {
