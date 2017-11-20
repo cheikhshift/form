@@ -63,9 +63,9 @@ var (
 	// string : Default submit button attribute class of
 	// generated HTML forms.
 	ButtonClass string
-	// int : Secret form key 
+	// string : Secret form key 
 	FormKey     = "a very very very very secret key"
-	// int : Maximum upload size
+	// int : Maximum upload size in Mb
 	MaxSize     = 10 //Mb
 )
 
