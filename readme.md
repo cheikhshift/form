@@ -6,9 +6,10 @@ Create HTML forms with your structs and interfaces.
 
 
 ### Install and import
-Add this tag within your `.gxml` file.
+Add these tags within your `.gxml` file.
 
 	<import src="github.com/cheikhshift/form/gos.gxml" />	
+	<import src='netform "github.com/cheikhshift/form"' />	
 
 
 ### Configure
