@@ -16,7 +16,6 @@
 		}
 	</main>
 	<import src="github.com/cheikhshift/gos/core"/>
-	<import src='netform "github.com/cheikhshift/form"'/>
 	<import src="reflect"/>
 	<key>a very very very very secret key</key>
 	
@@ -25,13 +24,13 @@
 		<struct name="SampleForm">
 			TestField string `title:"Hi world!",valid:"unique",placeholder:"Testfield prompt"`
 			Count int `placeholder:"Count"`
-			Name netform.Password `valid:"required",title:"Input title"`
-			FieldTwo netform.Radio `title:"Enter Email",valid:"email,unique,required",select:"blue,orange,red,green"`
-			FieldF netform.Select `placeholder:"Prompt?",valid:"email,unique,required",select:"blue,orange,red,green"`
-			Created netform.Date
-			Text netform.Paragraph 	`title:"Enter a description."`
-			Photo netform.File 	`file:"image/*"`
-			Emal netform.Email
+			Name Password `valid:"required",title:"Input title"`
+			FieldTwo Radio `title:"Enter Email",valid:"email,unique,required",select:"blue,orange,red,green"`
+			FieldF Select `placeholder:"Prompt?",valid:"email,unique,required",select:"blue,orange,red,green"`
+			Created Date
+			Text Paragraph 	`title:"Enter a description."`
+			Photo File 	`file:"image/*"`
+			Emal Email
 			Terms bool	`title:"Accept terms of use."`
 		</struct>
 		<struct name="fInput">
@@ -70,55 +69,55 @@
 			return args[0].(*http.Request).ContentLength > 0 
 		</method>
 		<method name="Form" var="" return="string">
-			err := netform.Form(args[0].(*http.Request) , args[1])
+			err := Form(args[0].(*http.Request) , args[1])
 			return err.Error()
 		</method>
 		<method name="TokenizeForm" var="" return="(form fForm)">
 			
 			v := reflect.ValueOf(args[0]).Elem()
 			//t := reflect.TypeOf(item)
-			bso :=  netform.ToBson( mResponse(args[0]) )
+			bso :=  ToBson( mResponse(args[0]) )
 			for i := 0; i < v.NumField(); i++ {
 				field := v.Type().Field(i)
 				
 				fieldtype := strings.ToLower(field.Type.String())
 				requird := strings.Contains(string(field.Tag), "required")
-				opts := netform.GetSel(string(field.Tag))
+				opts := GetSel(string(field.Tag))
 				title := field.Tag.Get("title")
-				placehlder := netform.GetPl(string(field.Tag))
+				placehlder := GetPl(string(field.Tag))
 				
 				
 				if strings.Contains(fieldtype, "bool"){
-					form.Input = append(form.Input, fInput{field.Name, "checkbox",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird })
+					form.Input = append(form.Input, fInput{field.Name, "checkbox",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird })
 				} else if strings.Contains(fieldtype, "int") || strings.Contains(fieldtype, "float") {
-					form.Input = append(form.Input, fInput{field.Name, "number",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird })
+					form.Input = append(form.Input, fInput{field.Name, "number",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird })
 				}  else if strings.Contains(fieldtype, "string"){
-					form.Input = append(form.Input, fInput{field.Name, "text",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird })
+					form.Input = append(form.Input, fInput{field.Name, "text",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird })
 				} else if strings.Contains(fieldtype, "email"){
-					form.Input = append(form.Input, fInput{field.Name, "email",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird })
+					form.Input = append(form.Input, fInput{field.Name, "email",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird })
 				} else if strings.Contains(fieldtype, "password"){
-					form.Input = append(form.Input, fInput{field.Name, "password",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird })
+					form.Input = append(form.Input, fInput{field.Name, "password",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird })
 				}  else if strings.Contains(fieldtype, "select"){
 					
-					form.Input = append(form.Input, fInput{field.Name, "select",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird })
+					form.Input = append(form.Input, fInput{field.Name, "select",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird })
 
 				}  else if strings.Contains(fieldtype, "radio"){
 
-					form.Input = append(form.Input, fInput{field.Name, "radio",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird })
+					form.Input = append(form.Input, fInput{field.Name, "radio",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird })
 
 				} else if strings.Contains(fieldtype, "selectmult"){
 					
-					form.Input = append(form.Input, fInput{field.Name, "selectmult",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird })
+					form.Input = append(form.Input, fInput{field.Name, "selectmult",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird })
 
 				}  else if strings.Contains(fieldtype, "date"){
-					form.Input = append(form.Input, fInput{field.Name, "date",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name] ), nil , requird })
+					form.Input = append(form.Input, fInput{field.Name, "date",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name] ), nil , requird })
 				}  else if strings.Contains(fieldtype, "file"){
 					placehlder = field.Tag.Get("file")
-					form.Input = append(form.Input, fInput{field.Name, "file",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name] ), nil , requird })
+					form.Input = append(form.Input, fInput{field.Name, "file",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name] ), nil , requird })
 				}  else if strings.Contains(fieldtype, "paragraph"){
-					form.Input = append(form.Input, fInput{field.Name, "textarea",placehlder,title,netform.InputClass,fmt.Sprintf("%v", bso[field.Name] ), nil , requird })
+					form.Input = append(form.Input, fInput{field.Name, "textarea",placehlder,title,InputClass,fmt.Sprintf("%v", bso[field.Name] ), nil , requird })
 				} else {
-					form.Input = append(form.Input, fInput{field.Name, "invalid",placehlder,title,netform.InputClass,"", nil , requird })
+					form.Input = append(form.Input, fInput{field.Name, "invalid",placehlder,title,InputClass,"", nil , requird })
 				}
 			}
 
@@ -129,49 +128,49 @@
 			v := reflect.ValueOf(args[0]).Elem()
 			//t := reflect.TypeOf(item)
 			modelClass := args[1].(string)
-			bso :=  netform.ToBson( mResponse(args[0]) )
+			bso :=  ToBson( mResponse(args[0]) )
 			for i := 0; i < v.NumField(); i++ {
 				field := v.Type().Field(i)
 				
 				fieldtype := strings.ToLower(field.Type.String())
 				requird := strings.Contains(string(field.Tag), "required")
-				opts := netform.GetSel(string(field.Tag))
+				opts := GetSel(string(field.Tag))
 				title := field.Tag.Get("title")
-				placehlder := netform.GetPl(string(field.Tag))
+				placehlder := GetPl(string(field.Tag))
 				
 
 				
 				if strings.Contains(fieldtype, "bool"){
-					form.Input = append(form.Input, afInput{field.Name, "checkbox",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird , modelClass})
+					form.Input = append(form.Input, afInput{field.Name, "checkbox",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird , modelClass})
 				} else if strings.Contains(fieldtype, "int") || strings.Contains(fieldtype, "float") {
-					form.Input = append(form.Input, afInput{field.Name, "number",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird, modelClass })
+					form.Input = append(form.Input, afInput{field.Name, "number",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird, modelClass })
 				}  else if strings.Contains(fieldtype, "string"){
-					form.Input = append(form.Input, afInput{field.Name, "text",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird , modelClass})
+					form.Input = append(form.Input, afInput{field.Name, "text",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird , modelClass})
 				} else if strings.Contains(fieldtype, "email"){
-					form.Input = append(form.Input, afInput{field.Name, "email",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird, modelClass })
+					form.Input = append(form.Input, afInput{field.Name, "email",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird, modelClass })
 				} else if strings.Contains(fieldtype, "password"){
-					form.Input = append(form.Input, afInput{field.Name, "password",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird, modelClass })
+					form.Input = append(form.Input, afInput{field.Name, "password",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), nil , requird, modelClass })
 				}  else if strings.Contains(fieldtype, "select"){
 					
-					form.Input = append(form.Input, afInput{field.Name, "select",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird, modelClass })
+					form.Input = append(form.Input, afInput{field.Name, "select",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird, modelClass })
 
 				}  else if strings.Contains(fieldtype, "radio"){
 
-					form.Input = append(form.Input, afInput{field.Name, "radio",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird , modelClass})
+					form.Input = append(form.Input, afInput{field.Name, "radio",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird , modelClass})
 
 				} else if strings.Contains(fieldtype, "selectmult"){
 					
-					form.Input = append(form.Input, afInput{field.Name, "selectmult",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird , modelClass })
+					form.Input = append(form.Input, afInput{field.Name, "selectmult",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name]), strings.Split(opts,",") , requird , modelClass })
 
 				}  else if strings.Contains(fieldtype, "date"){
-					form.Input = append(form.Input, afInput{field.Name, "date",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name] ), nil , requird, modelClass })
+					form.Input = append(form.Input, afInput{field.Name, "date",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name] ), nil , requird, modelClass })
 				}  else if strings.Contains(fieldtype, "file"){
 					placehlder = field.Tag.Get("file")
-					form.Input = append(form.Input, afInput{field.Name, "file",placehlder,title,netform.InputClass,fmt.Sprintf("%v",bso[field.Name] ), nil , requird, modelClass })
+					form.Input = append(form.Input, afInput{field.Name, "file",placehlder,title,InputClass,fmt.Sprintf("%v",bso[field.Name] ), nil , requird, modelClass })
 				}  else if strings.Contains(fieldtype, "paragraph"){
-					form.Input = append(form.Input, afInput{field.Name, "textarea",placehlder,title,netform.InputClass,fmt.Sprintf("%v", bso[field.Name] ), nil , requird, modelClass })
+					form.Input = append(form.Input, afInput{field.Name, "textarea",placehlder,title,InputClass,fmt.Sprintf("%v", bso[field.Name] ), nil , requird, modelClass })
 				} else {
-					form.Input = append(form.Input, afInput{field.Name, "invalid",placehlder,title,netform.InputClass,"", nil , requird, modelClass })
+					form.Input = append(form.Input, afInput{field.Name, "invalid",placehlder,title,InputClass,"", nil , requird, modelClass })
 				}
 			}
 
@@ -191,10 +190,10 @@
 				target := args[1].(string)
 				session := args[4].(*sessions.Session)
 
-				form.Token = netform.GenerateToken(target, session.Values["formtoken"].(string) )
+				form.Token = GenerateToken(target, session.Values["formtoken"].(string) )
 				form.Method = args[2].(string)
 				form.Target = target
-				form.ButtonClass = netform.ButtonClass
+				form.ButtonClass = ButtonClass
 				form.CTA = args[3].(string)
 				return btForm(form)
 		</method>
@@ -215,10 +214,10 @@
 				target := args[1].(string)
 				session := args[5].(*sessions.Session)
 				form.ModelName = modelclass
-				form.Token = netform.GenerateToken(target, session.Values["formtoken"].(string) )
+				form.Token = GenerateToken(target, session.Values["formtoken"].(string) )
 				form.Method = args[2].(string)
 				form.Target = target
-				form.ButtonClass = netform.ButtonClass
+				form.ButtonClass = ButtonClass
 				form.CTA = args[3].(string)
 				return batForm(form)
 		</method>
@@ -228,7 +227,7 @@
 		Argument 0 : String of URI your form is submitting to
 		Argument 1 : *sessions.Session (github.com/gorilla/sessions) -->
 				session := args[1].(*sessions.Session)
-				return netform.GenerateToken(args[0].(string), session.Values["formtoken"].(string) )
+				return GenerateToken(args[0].(string), session.Values["formtoken"].(string) )
 		</method>
 		
 
@@ -269,7 +268,7 @@
 
       		if r.ContentLength > 0	{
 
-      			if !netform.ValidateRequest(r, session.Values["formtoken"].(string) ) || r.ContentLength > int64(netform.MaxSize * netform.MB) {
+      			if !ValidateRequest(r, session.Values["formtoken"].(string) ) || r.ContentLength > int64(MaxSize * MB) {
       				
       				w.WriteHeader(http.StatusBadRequest)
       				w.Header().Set("Content-Type",  "text/xml")
@@ -283,14 +282,14 @@
 
       <end path="/target/url" type="POST" >
       		var sampleform SampleForm
-      		if err := netform.Form(r, &sampleform); err != nil {
+      		if err := Form(r, &sampleform); err != nil {
       			w.WriteHeader(http.StatusBadRequest)
       				w.Header().Set("Content-Type",  "text/xml")			
       				w.Write([]byte(fmt.Sprintf("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Error>%s Value :%v</Error>", err.Error(),sampleform )))
       			return true
       		}
       		response = mResponse(sampleform)
-      		//http.ServeFile(w, r, netform.Path(sampleform.Photo))
+      		//http.ServeFile(w, r, Path(sampleform.Photo))
       </end>
 
 	</endpoints>
